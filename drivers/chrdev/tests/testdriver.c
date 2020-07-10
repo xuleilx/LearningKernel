@@ -15,7 +15,7 @@ int main()
     for (i = 0; i < 60; i++) my_buf[i] = '*';
 
     printf("PID: %d\n", getpid());
-    fd = open("/dev/chrdev", O_RDWR);
+    fd = open("/dev/mychrdev", O_RDWR);
 
     ret = write(fd, my_buf, 60);
 
