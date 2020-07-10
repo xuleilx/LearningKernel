@@ -9,6 +9,7 @@
 
 # 建立节点
  mknod /dev/mychrdev c 247 0
+
  247: dmesg 可以看到
 
 # 测试
