@@ -233,7 +233,7 @@ static int  __hello_setup_dev(struct hello_android_dev* dev) {
 	}        
  
 	/*初始化信号量和寄存器val的值*/
-	//init_MUTEX(&(dev->sem));
+	sema_init (&(dev->sem),1);
 	dev->val = 0;
  
 	return 0;
