@@ -1,10 +1,7 @@
-```shell
-insmod newchrled.ko
-rmmod newchrled
-echo 1 > /dev/newchrled
-echo 0 > /dev/newchrled
-```
+# 功能描述
+采用设备树配置gpio相关寄存器的地址信息
 
+# 设备树
 ```dts
     stm32mp1_led{
         compatible = "atkstm32mp1-led";
@@ -16,4 +13,12 @@ echo 0 > /dev/newchrled
                0x5000A00C 0x04 /* GPIOI_PUPDR */
                0x5000A018 0x04 >; /* GPIOI_BSRR */
     };
+```
+
+# 测试
+```shell
+insmod newchrled.ko
+rmmod newchrled
+echo 1 > /dev/newchrled
+echo 0 > /dev/newchrled
 ```
