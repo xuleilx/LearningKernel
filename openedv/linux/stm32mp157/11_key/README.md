@@ -28,9 +28,9 @@ sdmmc1
 
 ## 需要添加的
 ```dts
-    gpioled{
-        compatible = "alex,led";
-        led-gpio = <&gpioi 0 GPIO_ACTIVE_LOW>;
+    key {
+        compatible = "alex,key";
+        gpios = <&gpiog 3 GPIO_ACTIVE_LOW>;
         status = "okay";
         /* 此处没有定义pin的引用情况 */
     };
@@ -64,8 +64,7 @@ stm32mp15-pinctrl.dtsi
 
 # 测试
 ```shell
-insmod gpioled.ko
-rmmod gpioled
-echo 1 > /dev/gpioled
-echo 0 > /dev/gpioled
+insmod key.ko
+rmmod key
+hexdump -e '"%02x\n"' /dev/keydev
 ```

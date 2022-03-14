@@ -17,8 +17,8 @@
 
 # 测试
 ```shell
-insmod newchrled.ko
-rmmod newchrled
-echo 1 > /dev/newchrled
-echo 0 > /dev/newchrled
+insmod dtsled.ko
+rmmod dtsled
+echo 1 > /dev/dtsled
+echo 0 > /dev/dtsled
 ```
