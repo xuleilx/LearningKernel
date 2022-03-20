@@ -7,6 +7,7 @@
 6. 采用定时器消抖
 7. 采用等待队列，实现阻塞读取
 8. 驱动实现poll函数，实现非阻塞读取
+9. 增加fasync异步通知机制
 
 # 设备树
 Documentation/devicetree/bindings/gpio/gpio.txt
@@ -72,11 +73,11 @@ stm32mp15-pinctrl.dtsi
 # ko
 make
 # keyirqApp
-arm-none-linux-gnueabihf-gcc noblockioApp.c -o noblockioApp
+arm-none-linux-gnueabihf-gcc fasyncApp.c -o fasyncApp
 ```
 # 测试
 ```shell
-insmod noblockio.ko
-rmmod noblockio
-noblockioApp /dev/noblockio
+insmod fasync.ko
+rmmod fasync
+fasyncApp /dev/fasync
 ```
