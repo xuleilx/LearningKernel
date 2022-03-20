@@ -20,9 +20,10 @@
 #include <linux/irq.h>
 
 #define KEY_CNT 1
-#define KEY_NAME "keyirq"
+#define KEY_NAME "blockio"
 
-enum key_status{
+enum key_status
+{
     KEY_PRESS = 0,
     KEY_RELEASE,
     KEY_NONE,
@@ -41,9 +42,10 @@ struct key_dev
     spinlock_t spinlock;
     struct tasklet_struct tasklet;
     int status;
+    wait_queue_head_t r_wait;
 };
 
-struct key_dev keydev={
+struct key_dev keydev = {
     .status = KEY_NONE,
 };
 
@@ -157,6 +159,7 @@ ssize_t kery_read(struct file *filp, char __user *buf, size_t cnt, loff_t *offse
     unsigned long flags;
     int ret = 0;
     struct key_dev *dev = filp->private_data;
+    ret = wait_event_interruptible(dev->r_wait, dev->status != KEY_NONE);
     spin_lock_irqsave(&dev->spinlock, flags);
     ret = copy_to_user(buf, &dev->status, sizeof(dev->status));
     if (ret)
@@ -183,26 +186,31 @@ static void timer_function(struct timer_list *args)
 {
     struct key_dev *dev = from_timer(dev, args, timer);
     unsigned long flags;
-    int cur_value ; 
+    int cur_value;
     static int last_value = 1;
 
-    spin_lock_irqsave(&dev->spinlock,flags);
+    spin_lock_irqsave(&dev->spinlock, flags);
     cur_value = gpio_get_value(dev->key_gpio);
-    if(0 == cur_value && cur_value != last_value ){
+    if (0 == cur_value && cur_value != last_value)
+    {
         dev->status = KEY_PRESS;
-    }else if(1 == cur_value && cur_value != last_value){
+    }
+    else if (1 == cur_value && cur_value != last_value)
+    {
         dev->status = KEY_RELEASE;
-    }else{
+    }
+    else
+    {
         dev->status = KEY_NONE;
     }
     last_value = cur_value;
     spin_unlock_irqrestore(&dev->spinlock, flags);
-
+    wake_up_interruptible(&dev->r_wait);
 }
 
 static void key_irq_tasklet(unsigned long drv)
 {
-	struct key_dev *dev = (struct key_dev *)drv;
+    struct key_dev *dev = (struct key_dev *)drv;
     mod_timer(&dev->timer, jiffies + msecs_to_jiffies(15));
 }
 
@@ -210,6 +218,7 @@ static int __init mykey_init(void)
 {
     int ret;
 
+    init_waitqueue_head(&keydev.r_wait);
     spin_lock_init(&keydev.spinlock);
     ret = key_parse();
     if (ret != 0)
