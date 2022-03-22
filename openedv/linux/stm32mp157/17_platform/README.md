@@ -1,6 +1,6 @@
 
 # 功能描述
-简单的led驱动
+使用platform驱动led点灯
 
 # 测试
 ```shell
