@@ -118,10 +118,10 @@ static int key_gpio_init(void)
         return ret;
     }
 
-    ret = gpio_direction_output(keydev.key_gpio, 1);
+    ret = gpio_direction_input(keydev.key_gpio);
     if (ret < 0)
     {
-        printk("cannot set gpio gpio_direction_output!\n");
+        printk("cannot set gpio gpio_direction_input!\n");
         return ret;
     }
 
